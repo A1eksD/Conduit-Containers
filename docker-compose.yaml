@@ -1,0 +1,26 @@
+services:
+  Backend:
+    build: ./backend
+    ports:
+      - "2222:8383"
+    restart: unless-stopped
+    env_file:
+      - ./backend/.env
+    volumes:
+      - local_data_back:/backend/media
+
+  Frontend:
+    build: ./frontend
+    ports:
+      - "1111:8282"
+    restart: unless-stopped
+    env_file:
+      - ./frontend/.env
+    depends_on:
+      - Backend
+    volumes:
+      - local_data_front:/frontend/media
+
+volumes:
+  local_data_back: 
+  local_data_front: 
