@@ -61,8 +61,8 @@ cd conduit-containers
 ```
 1. **Copy sample environment files and adjust if needed**
 ```bash
-cp backend/conduit-backend/.env.example backend/conduit-backend/.env
-cp frontend/conduit-frontend/.env.example frontend/conduit-frontend/.env
+cp backend/conduit-backend/example.env  backend/conduit-backend/.env
+cp frontend/conduit-frontend/example.env  frontend/conduit-frontend/.env
 ```
 
 1. **Build & run in detached mode**

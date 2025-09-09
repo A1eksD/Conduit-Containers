@@ -2,13 +2,14 @@
 FROM node:20-alpine AS build
 WORKDIR /src
 
-COPY package*.json ./
+COPY package*.json .npmrc* ./   
 
-RUN npm ci
+RUN --mount=type=cache,target=/root/.npm \
+    npm ci --no-audit --progress=false --legacy-peer-deps
 
 COPY . .
 
-RUN npm run build -- --configuration production   # erstellt dist/<project>/
+RUN npm run build -- --configuration production
 
 
 ### ---------- 2. Runtime-Stage ----------
