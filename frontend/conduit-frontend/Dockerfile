@@ -4,7 +4,7 @@ WORKDIR /src
 
 COPY package*.json .npmrc* ./   
 
-RUN npm ci --no-audit --progress=false --legacy-peer-deps
+RUN npm ci --legacy-peer-deps --progress=true
 
 COPY . .
 
