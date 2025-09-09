@@ -1,16 +1,14 @@
 ### ---------- 1. Build-Stage ----------
 FROM node:20-alpine AS build
-
 WORKDIR /src
 
-COPY frontend/package*.json .
+COPY package*.json ./
 
 RUN npm ci
 
-COPY frontend .
+COPY . .
 
-# erzeugt dist/
-RUN npm run build
+RUN npm run build -- --configuration production   # erstellt dist/<project>/
 
 
 ### ---------- 2. Runtime-Stage ----------
@@ -18,7 +16,7 @@ FROM nginx:1.27-alpine
 
 WORKDIR /usr/share/nginx/html
 
-COPY --from=build /src/dist .
+COPY --from=build /src/dist/angular-conduit ./
 
 EXPOSE 8282
 

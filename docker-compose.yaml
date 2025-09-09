@@ -1,26 +1,29 @@
 services:
-  Backend:
-    build: ./backend
+  backend:
+    build:
+      context: ./backend/conduit-backend
+    image: conduit-backend:v1
+    container_name: backend
     ports:
       - "2222:8383"
     restart: unless-stopped
     env_file:
-      - ./backend/.env
+      - ./backend/conduit-backend/.env
     volumes:
-      - local_data_back:/backend/media
+      - local_data_back:/app/media
 
-  Frontend:
-    build: ./frontend
+  frontend:
+    build:
+      context: ./frontend/conduit-frontend
+    image: conduit-frontend:v1
+    container_name: frontend
     ports:
       - "1111:8282"
     restart: unless-stopped
     env_file:
-      - ./frontend/.env
+      - ./frontend/conduit-frontend/.env
     depends_on:
-      - Backend
-    volumes:
-      - local_data_front:/frontend/media
+      - backend
 
 volumes:
-  local_data_back: 
-  local_data_front: 
+  local_data_back:

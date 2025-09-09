@@ -1,9 +1,9 @@
 # Conduit Containerized Application
 
 ## Project Overview
-The repository contains a **Django backend** and a **React (Vite) frontend** that together implement the Conduit demo application. Both services are packaged as lightweight Docker images via **multi‑stage builds** and orchestrated with **Docker Compose**.
+This repository bundles a **Django backend** and an **Angular frontend** that together implement the RealWorld / Conduit demo app. Both services are built via **multi-stage Dockerfiles** and orchestrated with **Docker Compose**.
 
-> Goal: spin‑up the full stack with one command, keep images small, and avoid shipping secrets.
+> **Goal**  Spin-up the full stack with one command. Keep images tiny. Never ship secrets inside images.
 
 
 ## Table of Contents
@@ -25,18 +25,23 @@ The repository contains a **Django backend** and a **React (Vite) frontend** tha
 ## Repository Structure
 ```
 .
-├─ backend/              # Django project
-│  ├─ Dockerfile         # multi‑stage backend image
-│  ├─ requirements.txt   # Python deps
-│  ├─ container-entrypoint.sh
-│  └─ .env.example
-├─ frontend/             # React UI
-│  ├─ Dockerfile         # multi‑stage frontend image
-│  ├─ package.json
-│  └─ .env.example
-├─ docker-compose.yaml   # orchestrates both services
-├─ .gitignore            # excludes node_modules, __pycache__, etc.
-└─ README.md             # you are here
+├─ backend/
+│  └─ conduit-backend/      # Django project root
+│     ├─ Dockerfile         # multi-stage backend build
+│     ├─ container-entrypoint.sh
+│     ├─ requirements.txt
+│     ├─ .env.example  -> copy to .env
+│     └─ …
+├─ frontend/
+│  └─ conduit-frontend/     # Angular project root
+│     ├─ Dockerfile         # multi-stage frontend build
+│     ├─ package.json
+│     ├─ angular.json
+│     ├─ .env.example  -> copy to .env
+│     └─ …
+├─ docker-compose.yaml      # orchestrates both services
+├─ .gitignore               # ignores node_modules, __pycache__, secrets …
+└─ README.md                # (this file)
 ```
 
 ---
@@ -52,12 +57,12 @@ The repository contains a **Django backend** and a **React (Vite) frontend** tha
 1. **Clone repository**
 ```bash
 git clone git@github.com:A1eksD/Conduit-Containers.git
-cd conduit
+cd conduit-containers
 ```
 1. **Copy sample environment files and adjust if needed**
 ```bash
-cp backend/.env.example backend/.env
-cp frontend/.env.example frontend/.env
+cp backend/conduit-backend/.env.example backend/conduit-backend/.env
+cp frontend/conduit-frontend/.env.example frontend/conduit-frontend/.env
 ```
 
 1. **Build & run in detached mode**
@@ -80,32 +85,32 @@ The first build can take a few minutes; subsequent builds are cached and faster.
 | Backend  | `DJANGO_SUPERUSER_USERNAME`  | Auto‑created admin user              |
 |          | `DJANGO_SUPERUSER_PASSWORD`  | Admin password                       |
 |          | `DJANGO_SUPERUSER_EMAIL`     | Admin mail                           |
-| Frontend | `VITE_API_URL`               | Base URL of backend API              |
+| Frontend | `API_URL`                    | Base URL of backend API              |
 
-Create real `.env` files **outside** the images; Compose injects them at container start (see `env_file:` directives).
+Compose injects these files via `env_file:` — they **never** go into the final images.
 
 ### Build Arguments
 | Arg            | Where        | Default | Notes |
 |----------------|--------------|---------|-------|
-| `BACKEND_PORT` | backend/Dockerfile | 8383 | Used by `EXPOSE` and Gunicorn bind |
-| `FRONTEND_PORT`| frontend/Dockerfile | 8282 | Nginx listen port |
+| `BACKEND_PORT` | backend Dockerfile | 8383 | Used by `EXPOSE` and Gunicorn bind |
+| `FRONTEND_PORT`| frontend Dockerfile | 8282 | Nginx listen port |
 
 Override at build time:
 ```bash
-docker compose build --build-arg BACKEND_PORT=9000
+docker compose build --build-arg BACKEND_PORT=8383 --build-arg FRONTEND_PORT=8282
 ```
 
-### Customizing Ports
-Host ↔ container port mappings live in `ports:`; change the **left** side only:
+### Port Mapping
+Change only the **left** side of the `HOST:CONTAINER` pair inside `docker-compose.yaml`:
 ```yaml
 ports:
-  - "5000:8383"  # host 5000 → container 8383
+  - "2222:8383"   # host 2222 → container 8383 (backend)
+  - "1111:8282"   # host 1111 → container 8282 (frontend)
 ```
 
 ---
 
 ## Architecture
-![architecture](docs/architecture.svg)
 
 ### Multi‑Stage Builds
 1. **Builder stage**: installs compilers & dependencies, runs tests, produces artefacts.
@@ -115,26 +120,21 @@ Benefits: image size ↓, attack surface ↓, build cache ↑.
 
 ### Runtime Diagram
 ```
-┌───────────┐    HTTP     ┌────────────┐
-│  nginx    │────────────▶│  backend   │
-│  (8282)   │            │  gunicorn  │
-└───────────┘            └────────────┘
-       ▲                        │
-       └──────── static files ◀─┘
+┌────────────┐ 1111  ┌──────────────┐
+│  nginx     │──────▶│  Gunicorn    │
+│  Angular   │       │  Django API  │
+└────────────┘       └──────────────┘
 ```
 
 ---
 
 ## Logging & Monitoring
-- **Stdout/Stderr** of each container is captured by Docker. View with:
-  ```bash
-  docker logs backend_1
-  docker logs frontend_1
-  ```
-- Export logs to a file:
-  ```bash
-  docker logs backend_1 > backend-$(date +%F).log
-  ```
+**Stdout/Stderr** of each container → `docker logs <name>`
+- Persist logs:
+```bash
+docker logs backend > backend-$(date +%F).log
+docker logs frontend > frontend-$(date +%F).log
+```
 - Rotate logs automatically:
   ```yaml
   logging:
