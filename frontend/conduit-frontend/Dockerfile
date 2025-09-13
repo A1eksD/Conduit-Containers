@@ -2,11 +2,9 @@
 FROM node:20-alpine AS build
 WORKDIR /src
 
-COPY package*.json .npmrc* ./   
+COPY . $WORKDIR
 
 RUN npm install --legacy-peer-deps --verbose
-
-COPY . .
 
 RUN npm run build -- --configuration production
 
