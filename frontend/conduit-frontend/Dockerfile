@@ -4,10 +4,9 @@ WORKDIR /src
 
 COPY . $WORKDIR
 
-RUN npm install --legacy-peer-deps --verbose
+RUN npm install
 
-RUN npm run build -- --configuration production
-
+RUN npm run build
 
 ### ---------- 2. Runtime-Stage ----------
 FROM nginx:1.27-alpine
@@ -16,6 +15,6 @@ WORKDIR /usr/share/nginx/html
 
 COPY --from=build /src/dist/angular-conduit ./
 
-EXPOSE 8282
+EXPOSE 80
 
 CMD ["nginx", "-g", "daemon off;"]
