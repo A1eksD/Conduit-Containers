@@ -66,7 +66,7 @@ cp conduit-frontend/example.env  conduit-frontend/.env
 
 1. **Build & run in detached mode**
 ```bash
-$ docker compose up --build -d
+docker-compose up --build -d
 ```
 The first build can take a few minutes; subsequent builds are cached and faster.
 

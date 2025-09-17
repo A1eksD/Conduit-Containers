@@ -19,7 +19,7 @@ services:
     container_name: frontend
     ports:
       - "8282:80"
-    restart: unless-stoppedg
+    restart: unless-stopped
     env_file:
       - ./conduit-frontend/.env
     depends_on:
