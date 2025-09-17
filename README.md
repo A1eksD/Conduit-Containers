@@ -25,15 +25,14 @@ This repository bundles a **Django backend** and an **Angular frontend** that to
 ## Repository Structure
 ```
 .
-├─ backend/
-│  └─ conduit-backend/      # Django project root
+
+├─ conduit-backend/         # Django project root
 │     ├─ Dockerfile         # multi-stage backend build
 │     ├─ container-entrypoint.sh
 │     ├─ requirements.txt
 │     ├─ .env.example  -> copy to .env
 │     └─ …
-├─ frontend/
-│  └─ conduit-frontend/     # Angular project root
+├─ conduit-frontend/        # Angular project root
 │     ├─ Dockerfile         # multi-stage frontend build
 │     ├─ package.json
 │     ├─ angular.json
@@ -61,8 +60,8 @@ cd conduit-containers
 ```
 1. **Copy sample environment files and adjust if needed**
 ```bash
-cp backend/conduit-backend/example.env  backend/conduit-backend/.env
-cp frontend/conduit-frontend/example.env  frontend/conduit-frontend/.env
+cp conduit-backend/example.env  backend/conduit-backend/.env
+cp conduit-frontend/example.env  frontend/conduit-frontend/.env
 ```
 
 1. **Build & run in detached mode**
