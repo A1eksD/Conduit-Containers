@@ -1,4 +1,15 @@
 services:
+
+  db:
+    image: bitnami/mariadb:11.8.3
+    ports:
+      - "3306:3306"
+    restart: unless-stopped
+    env_file:
+      - ./conduit-backend/.env
+    volumes:
+      - db_data:/bitnami/mariadb 
+
   backend:
     build:
       context: ./conduit-backend
@@ -9,6 +20,8 @@ services:
     restart: unless-stopped
     env_file:
       - ./conduit-backend/.env
+    depends_on:
+      - db
     volumes:
       - local_data_back:/app/media
 
@@ -26,4 +39,5 @@ services:
       - backend
 
 volumes:
+  db_data:
   local_data_back:
