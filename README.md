@@ -14,7 +14,7 @@ This repository bundles a **Django backend** and an **Angular frontend** that to
 - [Usage](#usage)
   - [Environment Variables](#environment-variables)
   - [Build Arguments](#build-arguments)
-  - [Customizing Ports](#customizing-ports)
+  - [Port Mapping](#port-mapping)
 - [Architecture](#architecture)
   - [Multi‑Stage Builds](#multi-stage-builds)
   - [Runtime Diagram](#runtime-diagram)
