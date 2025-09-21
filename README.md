@@ -61,7 +61,6 @@ cd conduit-containers
 1. **Copy sample environment files and adjust if needed**
 ```bash
 cp conduit-backend/example.env  conduit-backend/.env
-cp conduit-frontend/example.env  conduit-frontend/.env
 ```
 
 1. **Build & run in detached mode**
@@ -84,7 +83,6 @@ The first build can take a few minutes; subsequent builds are cached and faster.
 | Backend  | `DJANGO_SUPERUSER_USERNAME`  | Auto‑created admin user              |
 |          | `DJANGO_SUPERUSER_PASSWORD`  | Admin password                       |
 |          | `DJANGO_SUPERUSER_EMAIL`     | Admin mail                           |
-| Frontend | `API_URL`                    | Base URL of backend API              |
 
 Compose injects these files via `env_file:` — they **never** go into the final images.
 
